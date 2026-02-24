@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'practice_result.dart';
 import 'speech_practice.dart';
 
 class RegisterChildScreen extends StatefulWidget {
@@ -12,45 +11,47 @@ class RegisterChildScreen extends StatefulWidget {
 class _RegisterChildScreenState extends State<RegisterChildScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final TextEditingController difficultWordsController =
-      TextEditingController();
+  final TextEditingController difficultWordsController = TextEditingController();
 
   String selectedSound = "S";
   String selectedPosition = "Beginning";
-  String? selectedPreference;
+  String? selectedGenre;
   String practiceType = "Story";
 
-  final List<String> preferences = [
-    "Animals 🐶",
-    "Princess 👑",
-    "Space 🚀",
+  final List<String> genres = [
+    "Comedy",
+    "Fantasy",
+    "Romance",
+    "Adventure",
+    "Mystery",
+    "Science Fiction",
+    "Superhero",
+    "Fairy Tale",
+    "Animals",
+    "Sports",
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF3E0), // Soft peach background
+      backgroundColor: const Color(0xFFFFF3E0),
       appBar: AppBar(
         backgroundColor: Colors.pinkAccent,
-        title: const Text("🎵 Melodic Voice"),
+        title: const Text("Melodic Voice"),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-
             buildCard(
               child: Column(
                 children: [
                   const Text(
-                    "👶 Child Information",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    "Child Information",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
-
                   TextField(
                     controller: nameController,
                     decoration: const InputDecoration(
@@ -58,9 +59,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   TextField(
                     controller: ageController,
                     keyboardType: TextInputType.number,
@@ -72,20 +71,15 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                 ],
               ),
             ),
-
             buildCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const Text(
-                    "🎯 Sound Practice",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    "Sound Practice",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
-
                   DropdownButtonFormField<String>(
                     value: selectedSound,
                     decoration: const InputDecoration(
@@ -93,10 +87,8 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(
-                          value: "S", child: Text("S Sound 🐍")),
-                      DropdownMenuItem(
-                          value: "R", child: Text("R Sound 🚗")),
+                      DropdownMenuItem(value: "S", child: Text("S Sound")),
+                      DropdownMenuItem(value: "R", child: Text("R Sound")),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -104,9 +96,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 12),
-
                   DropdownButtonFormField<String>(
                     value: selectedPosition,
                     decoration: const InputDecoration(
@@ -115,14 +105,17 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                     ),
                     items: const [
                       DropdownMenuItem(
-                          value: "Beginning",
-                          child: Text("Beginning 🌟")),
+                        value: "Beginning",
+                        child: Text("Beginning"),
+                      ),
                       DropdownMenuItem(
-                          value: "Middle",
-                          child: Text("Middle ⭐")),
+                        value: "Middle",
+                        child: Text("Middle"),
+                      ),
                       DropdownMenuItem(
-                          value: "End",
-                          child: Text("End 🎯")),
+                        value: "End",
+                        child: Text("End"),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -130,35 +123,27 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 12),
-
                   TextField(
                     controller: difficultWordsController,
                     decoration: const InputDecoration(
-                      labelText:
-                          "Words to Practice (comma separated)",
+                      labelText: "Words to Practice (comma separated)",
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ],
               ),
             ),
-
             buildCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const Text(
-                    "📖 Choose Practice Type",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    "Choose Practice Type",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-
                   RadioListTile(
-                    title: const Text("Story 📚"),
+                    title: const Text("Story"),
                     value: "Story",
                     groupValue: practiceType,
                     onChanged: (value) {
@@ -167,9 +152,8 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       });
                     },
                   ),
-
                   RadioListTile(
-                    title: const Text("Song 🎵"),
+                    title: const Text("Song"),
                     value: "Song",
                     groupValue: practiceType,
                     onChanged: (value) {
@@ -178,9 +162,8 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       });
                     },
                   ),
-
                   RadioListTile(
-                    title: const Text("Both 🎉"),
+                    title: const Text("Both"),
                     value: "Both",
                     groupValue: practiceType,
                     onChanged: (value) {
@@ -189,56 +172,51 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 12),
-
                   DropdownButtonFormField<String>(
-                    value: selectedPreference,
+                    value: selectedGenre,
                     decoration: const InputDecoration(
-                      labelText: "Theme",
+                      labelText: "Favorite Genre",
                       border: OutlineInputBorder(),
                     ),
-                    items: preferences.map((pref) {
+                    items: genres.map((genre) {
                       return DropdownMenuItem(
-                        value: pref,
-                        child: Text(pref),
+                        value: genre,
+                        child: Text(genre),
                       );
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        selectedPreference = value;
+                        selectedGenre = value;
                       });
                     },
                   ),
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
               onPressed: () {
-  if (selectedSound != null && selectedSound.isNotEmpty) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SpeechPracticeScreen(
-          targetSound: selectedSound,
-        ),
-      ),
-    );
-  }
-}
+                if (selectedSound.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpeechPracticeScreen(
+                        targetSound: selectedSound,
+                      ),
+                    ),
+                  );
+                }
+              },
               child: const Text(
-                "✨ Generate Practice",
+                "Generate Practice",
                 style: TextStyle(fontSize: 18),
               ),
             ),
