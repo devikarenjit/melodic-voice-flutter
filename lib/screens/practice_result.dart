@@ -18,109 +18,235 @@ class PracticeResultScreen extends StatelessWidget {
     required this.position,
   });
 
-  // Step 1: Get word list (custom OR fallback)
-  List<String> generateWordList() {
-    if (difficultWords.isNotEmpty) {
-      return difficultWords
-          .split(",")
-          .map((w) => w.trim().toLowerCase())
-          .where((w) => w.isNotEmpty)
-          .toList();
+  List<String> _allDifficultWords() {
+    if (difficultWords.trim().isEmpty) {
+      return [];
     }
 
+    final words = difficultWords
+        .split(",")
+        .map((w) => w.trim().toLowerCase())
+        .where((w) => w.isNotEmpty)
+        .toSet()
+        .toList();
+    return words;
+  }
+
+  List<String> _detectedRWords() {
+    return _allDifficultWords().where((w) => w.contains("r")).toList();
+  }
+
+  List<String> _detectedSWords() {
+    return _allDifficultWords().where((w) => w.contains("s")).toList();
+  }
+
+  List<String> _fallbackWords() {
     if (targetSound == "S") {
       if (position == "Beginning") {
         return ["sun", "snake", "sister"];
-      } else if (position == "Middle") {
-        return ["messy", "pencil", "outside"];
-      } else {
-        return ["bus", "glass", "dress"];
       }
+      if (position == "Middle") {
+        return ["pencil", "outside", "messy"];
+      }
+      return ["bus", "glass", "dress"];
     }
 
     if (targetSound == "R") {
       if (position == "Beginning") {
         return ["rabbit", "rain", "rocket"];
-      } else if (position == "Middle") {
-        return ["carrot", "parrot", "forest"];
-      } else {
-        return ["car", "star", "bear"];
       }
+      if (position == "Middle") {
+        return ["carrot", "parrot", "forest"];
+      }
+      return ["car", "star", "bear"];
     }
 
     return ["practice"];
   }
 
-  // Step 2: Generate Story
+  List<String> _focusWords() {
+    final typedWords = _allDifficultWords();
+    if (typedWords.isEmpty) {
+      return _fallbackWords();
+    }
+
+    if (targetSound == "R") {
+      final rWords = typedWords.where((w) => w.contains("r")).toList();
+      return rWords.isEmpty ? _fallbackWords() : rWords;
+    }
+
+    if (targetSound == "S") {
+      final sWords = typedWords.where((w) => w.contains("s")).toList();
+      return sWords.isEmpty ? _fallbackWords() : sWords;
+    }
+
+    return typedWords;
+  }
+
+  String _genreScene() {
+    switch (preference) {
+      case "Comedy":
+        return "a funny town full of giggles";
+      case "Fantasy":
+        return "a magical kingdom of dragons and castles";
+      case "Romance":
+        return "a warm village where everyone shares kindness";
+      case "Adventure":
+        return "a wild trail with maps and hidden treasure";
+      case "Mystery":
+        return "a curious city full of clues";
+      case "Science Fiction":
+        return "a future world with robots and starships";
+      case "Superhero":
+        return "a hero city that needs brave helpers";
+      case "Fairy Tale":
+        return "an enchanted forest with talking animals";
+      case "Animals":
+        return "a friendly animal park";
+      case "Sports":
+        return "a busy stadium on game day";
+      default:
+        return "a bright story world";
+    }
+  }
+
+  String _genreAction() {
+    switch (preference) {
+      case "Comedy":
+        return "made everyone laugh";
+      case "Fantasy":
+        return "sparkled with magic";
+      case "Romance":
+        return "shared sweet words";
+      case "Adventure":
+        return "helped solve the quest";
+      case "Mystery":
+        return "unlocked a new clue";
+      case "Science Fiction":
+        return "powered the mission";
+      case "Superhero":
+        return "saved the day";
+      case "Fairy Tale":
+        return "brought wonder";
+      case "Animals":
+        return "made the animals cheer";
+      case "Sports":
+        return "won the crowd";
+      default:
+        return "sounded great";
+    }
+  }
+
+  String _repeatWord(String word, int count) {
+    return List.generate(count, (_) => word).join(", ");
+  }
+
+  String _storyOpener() {
+    switch (preference) {
+      case "Comedy":
+        return "One bright morning, a silly surprise made everyone laugh.";
+      case "Fantasy":
+        return "At sunrise, a magical wind moved through the kingdom.";
+      case "Romance":
+        return "On a calm day, kind hearts gathered in the town square.";
+      case "Adventure":
+        return "At dawn, the map glowed and the journey began.";
+      case "Mystery":
+        return "At first light, a new clue appeared near the old gate.";
+      case "Science Fiction":
+        return "At launch time, the crew prepared for a star mission.";
+      case "Superhero":
+        return "At sunrise, the city called for a brave helper.";
+      case "Fairy Tale":
+        return "At morning bell, the enchanted forest woke up.";
+      case "Animals":
+        return "At feeding time, every animal was excited.";
+      case "Sports":
+        return "Before the big game, the crowd started to cheer.";
+      default:
+        return "A new day started in a bright story world.";
+    }
+  }
+
   String generateStory(List<String> words) {
-    String story = "📖 Once upon a time in a $preference world,\n\n";
+    final buffer = StringBuffer();
+    buffer.writeln("Story Time");
+    buffer.writeln();
+    buffer.writeln("In ${_genreScene()}, $name practiced the $targetSound sound.");
+    buffer.writeln(_storyOpener());
+    buffer.writeln();
 
-    for (var word in words) {
-      story += "The $word was very special. ";
-      story += "The $word loved to shine brightly. ";
-      story += "Everyone said $word, $word, $word again and again. ";
-      story += "\n\n";
+    for (final word in words) {
+      buffer.writeln("The word \"$word\" ${_genreAction()}.");
+      buffer.writeln(
+        "$name practiced: ${_repeatWord(word, 3)}.",
+      );
+      buffer.writeln(
+        "Sentence practice: \"$word\" is strong, \"$word\" is clear, \"$word\" sounds great.",
+      );
+      buffer.writeln();
     }
 
-    story +=
-        "This story helps practice the $targetSound sound in the $position position. ✨";
-
-    return story;
+    buffer.writeln(
+      "Goal: practice $targetSound in the $position position using ${words.join(", ")}.",
+    );
+    return buffer.toString();
   }
 
-  // Step 3: Generate Song
   String generateSong(List<String> words) {
-    String song = "🎵 Sing along!\n\n";
+    final buffer = StringBuffer();
+    buffer.writeln("Song Time");
+    buffer.writeln();
+    buffer.writeln("Genre beat: $preference");
+    buffer.writeln();
 
-    for (var word in words) {
-      song += "$word, $word, say it slow,\n";
-      song += "$word, $word, let it flow!\n";
-      song += "Say $word loud, say $word clear,\n";
-      song += "Practice $word so we can hear!\n\n";
+    for (final word in words) {
+      buffer.writeln("${_repeatWord(word, 2)}, sing it slow,");
+      buffer.writeln("${_repeatWord(word, 2)}, clear and bright,");
+      buffer.writeln("$word, $word, $word, say the $targetSound sound just right.");
+      buffer.writeln();
     }
 
-    song += "Practice the $targetSound sound every day! 🎶";
-
-    return song;
+    buffer.writeln("$name keeps practicing every day.");
+    return buffer.toString();
   }
 
-  // Step 4: Decide what to show
   String generateContent() {
-    List<String> words = generateWordList();
-
+    final words = _focusWords();
     if (words.isEmpty) {
-      return "No practice words provided.";
+      return "No practice words available.";
     }
 
     if (practiceType == "Story") {
       return generateStory(words);
     }
-
     if (practiceType == "Song") {
       return generateSong(words);
     }
-
-    return generateStory(words) + "\n\n" + generateSong(words);
+    return "${generateStory(words)}\n\n${generateSong(words)}";
   }
 
   @override
   Widget build(BuildContext context) {
+    final rWords = _detectedRWords();
+    final sWords = _detectedSWords();
+    final focused = _focusWords();
+
     return Scaffold(
-      backgroundColor: const Color(0xFFE3F2FD),
+      backgroundColor: const Color(0xFFEFF4FF),
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
-        title: const Text("🌟 Practice Time!"),
+        title: const Text("Practice Time"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               Text(
-                "Great Job, $name! 🎉",
+                "Great job, $name",
                 style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -128,67 +254,62 @@ class PracticeResultScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-
-              const SizedBox(height: 20),
-
-              // Info Card
+              const SizedBox(height: 16),
               Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
+                elevation: 4,
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("🎯 Target Sound: $targetSound"),
-                      Text("📍 Position: $position"),
-                      Text("🌈 Theme: $preference"),
-                      Text("🎭 Practice Type: $practiceType"),
+                      Text("Target sound: $targetSound"),
+                      Text("Position: $position"),
+                      Text("Genre: $preference"),
+                      Text("Practice type: $practiceType"),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 25),
-
-              // Generated Practice
+              const SizedBox(height: 12),
               Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                elevation: 4,
                 child: Padding(
-                  padding: const EdgeInsets.all(25),
-                  child: Text(
-                    generateContent(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Detected difficult words with R: ${rWords.join(", ")}"),
+                      const SizedBox(height: 6),
+                      Text("Detected difficult words with S: ${sWords.join(", ")}"),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Words used for this practice (${targetSound.toUpperCase()} focus): ${focused.join(", ")}",
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 30),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+              const SizedBox(height: 16),
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Text(
+                    generateContent(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "🔁 Practice Again",
-                  style: TextStyle(fontSize: 18),
-                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Practice Again"),
               ),
             ],
           ),

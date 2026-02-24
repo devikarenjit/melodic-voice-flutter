@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'speech_practice.dart';
+import 'practice_result.dart';
 
 class RegisterChildScreen extends StatefulWidget {
   const RegisterChildScreen({Key? key}) : super(key: key);
@@ -208,8 +208,15 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SpeechPracticeScreen(
+                      builder: (context) => PracticeResultScreen(
+                        name: nameController.text.trim().isEmpty
+                            ? "Child"
+                            : nameController.text.trim(),
+                        preference: selectedGenre ?? "Adventure",
+                        practiceType: practiceType,
+                        difficultWords: difficultWordsController.text.trim(),
                         targetSound: selectedSound,
+                        position: selectedPosition,
                       ),
                     ),
                   );
