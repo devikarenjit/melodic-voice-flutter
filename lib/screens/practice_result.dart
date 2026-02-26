@@ -32,7 +32,44 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
   bool _isListening = false;
   String _recognizedText = "";
   int _score = 0;
-  String _scoreMessage = "Tap Listen first, then record the child repeating it.";
+  String _scoreMessage = "Tap Listen, then record and repeat.";
+
+  static final RegExp _lettersOnly = RegExp("^[a-z]+\$");
+
+  static const Set<String> _blockedWords = {
+    "hacker",
+    "stalker",
+    "lover",
+    "sex",
+    "sexy",
+    "kiss",
+    "kissing",
+    "romance",
+    "violent",
+    "violence",
+    "kill",
+    "killing",
+    "dead",
+    "murder",
+    "gun",
+    "weapon",
+    "drugs",
+    "alcohol",
+    "beer",
+    "adult",
+    "nude",
+  };
+
+  static const List<String> _safeReplacementWords = [
+    "rabbit",
+    "sun",
+    "star",
+    "rose",
+    "story",
+    "smile",
+    "rainbow",
+    "sister",
+  ];
 
   @override
   void initState() {
@@ -58,12 +95,10 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       if (!mounted) return;
       setState(() => _isSpeaking = true);
     });
-
     _tts.setCompletionHandler(() {
       if (!mounted) return;
       setState(() => _isSpeaking = false);
     });
-
     _tts.setCancelHandler(() {
       if (!mounted) return;
       setState(() => _isSpeaking = false);
@@ -72,15 +107,22 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
 
   List<String> _allDifficultWords() {
     if (widget.difficultWords.trim().isEmpty) {
-      return [];
+      return _safeReplacementWords.take(4).toList();
     }
 
-    return widget.difficultWords
+    final cleaned = widget.difficultWords
         .split(",")
         .map((w) => w.trim().toLowerCase())
-        .where((w) => w.isNotEmpty)
+        .where((w) => w.isNotEmpty && _lettersOnly.hasMatch(w))
+        .where((w) => !_blockedWords.contains(w))
         .toSet()
         .toList();
+
+    if (cleaned.isNotEmpty) {
+      return cleaned.take(6).toList();
+    }
+
+    return _safeReplacementWords.take(4).toList();
   }
 
   List<String> _detectedRWords() {
@@ -109,21 +151,19 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
 
   List<String> _focusWords() {
     final typedWords = _allDifficultWords();
-    if (typedWords.isEmpty) {
-      return _fallbackWords();
-    }
+    if (typedWords.isEmpty) return _fallbackWords();
 
     if (widget.targetSound == "R") {
       final rWords = typedWords.where((w) => w.contains("r")).toList();
-      return rWords.isEmpty ? _fallbackWords() : rWords;
+      return rWords.isEmpty ? _fallbackWords() : rWords.take(4).toList();
     }
 
     if (widget.targetSound == "S") {
       final sWords = typedWords.where((w) => w.contains("s")).toList();
-      return sWords.isEmpty ? _fallbackWords() : sWords;
+      return sWords.isEmpty ? _fallbackWords() : sWords.take(4).toList();
     }
 
-    return typedWords;
+    return typedWords.take(4).toList();
   }
 
   String _genreScene() {
@@ -131,52 +171,25 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       case "Comedy":
         return "a funny town full of giggles";
       case "Fantasy":
-        return "a magical kingdom of dragons and castles";
-      case "Romance":
-        return "a warm village where everyone shares kindness";
+        return "a magical kingdom with friendly dragons";
+      case "Friendship":
+        return "a happy village where friends help each other";
       case "Adventure":
-        return "a wild trail with maps and hidden treasure";
+        return "a bright trail with clues and treasure maps";
       case "Mystery":
-        return "a curious city full of clues";
+        return "a curious town with playful puzzles";
       case "Science Fiction":
-        return "a future world with robots and starships";
+        return "a future city with kind robots";
       case "Superhero":
-        return "a hero city that needs brave helpers";
+        return "a hero city where everyone works as a team";
       case "Fairy Tale":
         return "an enchanted forest with talking animals";
       case "Animals":
-        return "a friendly animal park";
+        return "a cheerful animal park";
       case "Sports":
-        return "a busy stadium on game day";
+        return "a stadium full of cheering teammates";
       default:
-        return "a bright story world";
-    }
-  }
-
-  String _genreAction() {
-    switch (widget.preference) {
-      case "Comedy":
-        return "made everyone laugh";
-      case "Fantasy":
-        return "sparkled with magic";
-      case "Romance":
-        return "shared sweet words";
-      case "Adventure":
-        return "helped solve the quest";
-      case "Mystery":
-        return "unlocked a new clue";
-      case "Science Fiction":
-        return "powered the mission";
-      case "Superhero":
-        return "saved the day";
-      case "Fairy Tale":
-        return "brought wonder";
-      case "Animals":
-        return "made the animals cheer";
-      case "Sports":
-        return "won the crowd";
-      default:
-        return "sounded great";
+        return "a colorful story world";
     }
   }
 
@@ -184,31 +197,16 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     return List.generate(count, (_) => word).join(", ");
   }
 
-  String _storyOpener() {
-    switch (widget.preference) {
-      case "Comedy":
-        return "One bright morning, a silly surprise made everyone laugh.";
-      case "Fantasy":
-        return "At sunrise, a magical wind moved through the kingdom.";
-      case "Romance":
-        return "On a calm day, kind hearts gathered in the town square.";
-      case "Adventure":
-        return "At dawn, the map glowed and the journey began.";
-      case "Mystery":
-        return "At first light, a new clue appeared near the old gate.";
-      case "Science Fiction":
-        return "At launch time, the crew prepared for a star mission.";
-      case "Superhero":
-        return "At sunrise, the city called for a brave helper.";
-      case "Fairy Tale":
-        return "At morning bell, the enchanted forest woke up.";
-      case "Animals":
-        return "At feeding time, every animal was excited.";
-      case "Sports":
-        return "Before the big game, the crowd started to cheer.";
-      default:
-        return "A new day started in a bright story world.";
-    }
+  String _rhymeLineA(String word) {
+    return "$word, $word, clap and play,";
+  }
+
+  String _rhymeLineB(String word) {
+    return "$word, $word, bright today,";
+  }
+
+  String _rhymeLineC(String word) {
+    return "$word, $word, say hooray,";
   }
 
   String generateStory(List<String> words) {
@@ -218,48 +216,41 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     buffer.writeln(
       "In ${_genreScene()}, ${widget.name} practiced the ${widget.targetSound} sound.",
     );
-    buffer.writeln(_storyOpener());
     buffer.writeln();
 
     for (final word in words) {
-      buffer.writeln("The word \"$word\" ${_genreAction()}.");
-      buffer.writeln("${widget.name} practiced: ${_repeatWord(word, 3)}.");
-      buffer.writeln(
-        "Sentence practice: \"$word\" is strong, \"$word\" is clear, \"$word\" sounds great.",
-      );
+      buffer.writeln("Practice word: $word");
+      buffer.writeln("${widget.name} says: ${_repeatWord(word, 3)}.");
+      buffer.writeln("Great speaking. Keep going.");
       buffer.writeln();
     }
 
-    buffer.writeln(
-      "Goal: practice ${widget.targetSound} in the ${widget.position} position using ${words.join(", ")}.",
-    );
+    buffer.writeln("Goal: practice ${widget.targetSound} in ${widget.position} words.");
     return buffer.toString();
   }
 
   String generateSong(List<String> words) {
     final buffer = StringBuffer();
-    buffer.writeln("Song Time");
+    buffer.writeln("Rhyme Song Time");
     buffer.writeln();
-    buffer.writeln("Genre beat: ${widget.preference}");
+    buffer.writeln("Sing with a smile and gentle voice.");
     buffer.writeln();
-
     for (final word in words) {
-      buffer.writeln("${_repeatWord(word, 2)}, sing it slow,");
-      buffer.writeln("${_repeatWord(word, 2)}, clear and bright,");
+      buffer.writeln(_rhymeLineA(word));
+      buffer.writeln(_rhymeLineB(word));
+      buffer.writeln(_rhymeLineC(word));
       buffer.writeln(
-        "$word, $word, $word, say the ${widget.targetSound} sound just right.",
+        "Say the ${widget.targetSound} sound clearly today.",
       );
+      buffer.writeln("$word, $word, hip hip hooray.");
       buffer.writeln();
     }
-
-    buffer.writeln("${widget.name} keeps practicing every day.");
+    buffer.writeln("${widget.name} sings and practices every day.");
     return buffer.toString();
   }
 
   String generateContent() {
     final words = _focusWords();
-    if (words.isEmpty) return "No practice words available.";
-
     if (widget.practiceType == "Story") return generateStory(words);
     if (widget.practiceType == "Song") return generateSong(words);
     return "${generateStory(words)}\n\n${generateSong(words)}";
@@ -271,9 +262,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       setState(() => _isListening = false);
     }
 
-    final content = generateContent();
     await _tts.stop();
-    await _tts.speak(content);
+    await _tts.speak(generateContent());
   }
 
   Future<void> _startRecording() async {
@@ -300,9 +290,7 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     );
 
     if (!available) {
-      setState(() {
-        _scoreMessage = "Microphone unavailable. Check app permission.";
-      });
+      setState(() => _scoreMessage = "Microphone unavailable. Check permission.");
       return;
     }
 
@@ -310,15 +298,13 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       _recognizedText = "";
       _score = 0;
       _isListening = true;
-      _scoreMessage = "Listening... child should repeat what was heard.";
+      _scoreMessage = "Listening...";
     });
 
     _speech.listen(
       onResult: (result) {
         if (!mounted) return;
-        setState(() {
-          _recognizedText = result.recognizedWords.toLowerCase();
-        });
+        setState(() => _recognizedText = result.recognizedWords.toLowerCase());
       },
       listenMode: stt.ListenMode.confirmation,
       cancelOnError: true,
@@ -338,27 +324,25 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     if (expected.isEmpty || _recognizedText.trim().isEmpty) {
       setState(() {
         _score = 0;
-        _scoreMessage = "No speech detected yet. Try recording again.";
+        _scoreMessage = "No speech detected. Try again.";
       });
       return;
     }
 
-    int matched = 0;
+    var matched = 0;
     for (final word in expected) {
-      if (_recognizedText.contains(word)) {
-        matched++;
-      }
+      if (_recognizedText.contains(word)) matched++;
     }
 
     final percent = ((matched / expected.length) * 100).round();
     setState(() {
       _score = percent;
       if (percent >= 85) {
-        _scoreMessage = "Excellent pronunciation and repetition.";
+        _scoreMessage = "Amazing job. Very clear speaking.";
       } else if (percent >= 60) {
-        _scoreMessage = "Good attempt. Repeat once more for a higher score.";
+        _scoreMessage = "Nice try. One more round for extra stars.";
       } else {
-        _scoreMessage = "Keep practicing. Listen again and repeat slowly.";
+        _scoreMessage = "Good effort. Listen again and say each word slowly.";
       }
     });
   }
@@ -393,58 +377,27 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
               ),
               const SizedBox(height: 16),
               Card(
-                elevation: 4,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Target sound: ${widget.targetSound}"),
-                      Text("Position: ${widget.position}"),
-                      Text("Genre: ${widget.preference}"),
-                      Text("Practice type: ${widget.practiceType}"),
-                    ],
+                  child: Text(
+                    "Target: ${widget.targetSound}  |  Position: ${widget.position}\n"
+                    "R words: ${rWords.isEmpty ? "none" : rWords.join(", ")}\n"
+                    "S words: ${sWords.isEmpty ? "none" : sWords.join(", ")}\n"
+                    "Practice words: ${focused.join(", ")}",
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               Card(
-                elevation: 4,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Detected difficult words with R: ${rWords.isEmpty ? "none" : rWords.join(", ")}",
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Detected difficult words with S: ${sWords.isEmpty ? "none" : sWords.join(", ")}",
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Words used for this practice (${widget.targetSound.toUpperCase()} focus): ${focused.join(", ")}",
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(18),
                   child: Text(
                     generateContent(),
-                    style: const TextStyle(fontSize: 18, height: 1.5),
+                    style: const TextStyle(fontSize: 18, height: 1.45),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
@@ -479,13 +432,13 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
                       Text(_scoreMessage),
                       const SizedBox(height: 6),
                       Text(
-                        "Recorded speech: ${_recognizedText.isEmpty ? "No recording yet." : _recognizedText}",
+                        "Speech preview: ${_recognizedText.isEmpty ? "No recording yet." : _recognizedText.split(" ").take(20).join(" ")}",
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text("Practice Again"),

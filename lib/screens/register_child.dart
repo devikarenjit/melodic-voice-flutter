@@ -21,7 +21,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
   final List<String> genres = [
     "Comedy",
     "Fantasy",
-    "Romance",
+    "Friendship",
     "Adventure",
     "Mystery",
     "Science Fiction",
@@ -128,6 +128,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                     controller: difficultWordsController,
                     decoration: const InputDecoration(
                       labelText: "Words to Practice (comma separated)",
+                      helperText: "Use simple child-safe words only (example: sun, rabbit, star).",
                       border: OutlineInputBorder(),
                     ),
                   ),
