@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'screens/register_child.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const MelodicVoiceApp());
@@ -17,7 +17,7 @@ class MelodicVoiceApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
-      home: RegisterChildScreen(),
+      home: const SplashScreen(),
     );
   }
 }

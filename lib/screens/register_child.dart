@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/parent_pin_service.dart';
+import 'parent_settings.dart';
 import 'practice_result.dart';
 
 class RegisterChildScreen extends StatefulWidget {
@@ -31,6 +33,50 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
     "Sports",
   ];
 
+  Future<void> _openParentSettings() async {
+    final pinController = TextEditingController();
+    final enteredPin = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Parent Access"),
+          content: TextField(
+            controller: pinController,
+            keyboardType: TextInputType.number,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: "Enter PIN"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, pinController.text.trim()),
+              child: const Text("Open"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || enteredPin == null) return;
+    final savedPin = await ParentPinService.getPin();
+    if (enteredPin != savedPin) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Incorrect PIN")),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ParentSettingsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +85,13 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
         backgroundColor: Colors.pinkAccent,
         title: const Text("Melodic Voice"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: _openParentSettings,
+            icon: const Icon(Icons.lock_outline),
+            tooltip: "Parent Settings",
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

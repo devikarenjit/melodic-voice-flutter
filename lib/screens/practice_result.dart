@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'parent_details.dart';
+import '../services/parent_pin_service.dart';
 
 class PracticeResultScreen extends StatefulWidget {
   final String name;
@@ -319,6 +321,58 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     _calculateScore();
   }
 
+  Future<void> _openParentDetails() async {
+    final pinController = TextEditingController();
+    final enteredPin = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Parent Access"),
+          content: TextField(
+            controller: pinController,
+            keyboardType: TextInputType.number,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: "Enter PIN"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, pinController.text.trim()),
+              child: const Text("Open"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || enteredPin == null) return;
+
+    final savedPin = await ParentPinService.getPin();
+    if (enteredPin != savedPin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Incorrect PIN")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ParentDetailsScreen(
+          score: _score,
+          scoreMessage: _scoreMessage,
+          speechPreview: _recognizedText,
+          practiceWords: _focusWords(),
+          targetSound: widget.targetSound,
+          position: widget.position,
+        ),
+      ),
+    );
+  }
+
   void _calculateScore() {
     final expected = _focusWords();
     if (expected.isEmpty || _recognizedText.trim().isEmpty) {
@@ -358,7 +412,10 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
-        title: const Text("Practice Time"),
+        title: GestureDetector(
+          onLongPress: _openParentDetails,
+          child: const Text("Practice Time"),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -430,10 +487,6 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
                       Text("Score: $_score / 100"),
                       const SizedBox(height: 6),
                       Text(_scoreMessage),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Speech preview: ${_recognizedText.isEmpty ? "No recording yet." : _recognizedText.split(" ").take(20).join(" ")}",
-                      ),
                     ],
                   ),
                 ),
