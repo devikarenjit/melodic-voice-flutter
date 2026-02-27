@@ -13,7 +13,6 @@ class RegisterChildScreen extends StatefulWidget {
 class _RegisterChildScreenState extends State<RegisterChildScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final TextEditingController difficultWordsController = TextEditingController();
 
   String selectedSound = "S";
   String selectedPosition = "Beginning";
@@ -32,6 +31,15 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
     "Animals",
     "Sports",
   ];
+
+  int? _validatedAgeOrNull() {
+    final raw = ageController.text.trim();
+    final parsed = int.tryParse(raw);
+    if (parsed == null || parsed < 3 || parsed > 12) {
+      return null;
+    }
+    return parsed;
+  }
 
   Future<void> _openParentSettings() async {
     final pinController = TextEditingController();
@@ -118,6 +126,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: "Age",
+                      helperText: "Supported age range: 3-12",
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -175,15 +184,6 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                         selectedPosition = value!;
                       });
                     },
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: difficultWordsController,
-                    decoration: const InputDecoration(
-                      labelText: "Words to Practice (comma separated)",
-                      helperText: "Use simple child-safe words only (example: sun, rabbit, star).",
-                      border: OutlineInputBorder(),
-                    ),
                   ),
                 ],
               ),
@@ -258,6 +258,15 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                 ),
               ),
               onPressed: () {
+                final validAge = _validatedAgeOrNull();
+                if (validAge == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please enter a valid age between 3 and 12."),
+                    ),
+                  );
+                  return;
+                }
                 if (selectedSound.isNotEmpty) {
                   Navigator.push(
                     context,
@@ -266,9 +275,9 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
                         name: nameController.text.trim().isEmpty
                             ? "Child"
                             : nameController.text.trim(),
+                        age: validAge,
                         preference: selectedGenre ?? "Adventure",
                         practiceType: practiceType,
-                        difficultWords: difficultWordsController.text.trim(),
                         targetSound: selectedSound,
                         position: selectedPosition,
                       ),
