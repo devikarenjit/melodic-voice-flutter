@@ -120,20 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
                     rest: 'oice',
                   ),
 
-                  const SizedBox(height: 24),
-
-                  // Subtitle
-                  Text(
-                    'AI Speech Therapy',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: const Color(0xFF2F4A7A).withOpacity(0.7),
-                      fontStyle: FontStyle.italic,
-                      fontFamily: 'Roboto',
-                    ),
-                  ),
-
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 74),
 
                   // Loading indicator
                   const CircularProgressIndicator(
@@ -313,7 +300,7 @@ class StarsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFFFD700).withOpacity(0.4)
+      ..color = Colors.white.withValues(alpha: 0.4)
       ..style = PaintingStyle.fill;
 
     // Draw stars at fixed positions for consistency
@@ -339,7 +326,7 @@ class StarsPainter extends CustomPainter {
     ];
 
     final sparklePaint = Paint()
-      ..color = const Color(0xFFFFD700).withOpacity(0.5);
+      ..color = Colors.white.withValues(alpha: 0.55);
 
     for (final pos in sparklePositions) {
       canvas.drawCircle(pos, 3, sparklePaint);
