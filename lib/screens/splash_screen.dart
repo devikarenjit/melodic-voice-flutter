@@ -115,9 +115,15 @@ class _SplashScreenState extends State<SplashScreen>
                     isM: true,
                     rest: 'elodic',
                   ),
-                  _buildMusicalWord(
-                    isM: false,
-                    rest: 'oice',
+                  Text(
+                    'Voice',
+                    style: const TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF6B4CCF),
+                      fontFamily: 'Roboto',
+                      letterSpacing: 1.2,
+                    ),
                   ),
 
                   const SizedBox(height: 74),
@@ -331,6 +337,90 @@ class StarsPainter extends CustomPainter {
     for (final pos in sparklePositions) {
       canvas.drawCircle(pos, 3, sparklePaint);
     }
+
+    // Add soft musical notes in the background.
+    final notePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.28)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round;
+
+    final noteFill = Paint()
+      ..color = Colors.white.withValues(alpha: 0.32)
+      ..style = PaintingStyle.fill;
+
+    _drawEighthNote(canvas, Offset(size.width * 0.18, size.height * 0.18), 18, notePaint, noteFill);
+    _drawEighthNote(canvas, Offset(size.width * 0.82, size.height * 0.3), 16, notePaint, noteFill);
+    _drawEighthNote(canvas, Offset(size.width * 0.72, size.height * 0.72), 20, notePaint, noteFill);
+    _drawEighthNote(canvas, Offset(size.width * 0.28, size.height * 0.84), 14, notePaint, noteFill);
+
+    _drawDoubleNote(canvas, Offset(size.width * 0.85, size.height * 0.13), 14, notePaint, noteFill);
+    _drawDoubleNote(canvas, Offset(size.width * 0.12, size.height * 0.62), 12, notePaint, noteFill);
+  }
+
+  void _drawEighthNote(
+    Canvas canvas,
+    Offset center,
+    double size,
+    Paint stroke,
+    Paint fill,
+  ) {
+    final stemTop = Offset(center.dx + size * 0.28, center.dy - size * 1.0);
+    final stemBottom = Offset(center.dx + size * 0.28, center.dy - size * 0.15);
+    canvas.drawLine(stemTop, stemBottom, stroke);
+
+    final flag = Path()
+      ..moveTo(stemTop.dx, stemTop.dy + 2)
+      ..quadraticBezierTo(
+        stemTop.dx + size * 0.42,
+        stemTop.dy + size * 0.1,
+        stemTop.dx + size * 0.18,
+        stemTop.dy + size * 0.48,
+      );
+    canvas.drawPath(flag, stroke);
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx, center.dy),
+        width: size * 0.78,
+        height: size * 0.58,
+      ),
+      fill,
+    );
+  }
+
+  void _drawDoubleNote(
+    Canvas canvas,
+    Offset center,
+    double size,
+    Paint stroke,
+    Paint fill,
+  ) {
+    final leftTop = Offset(center.dx - size * 0.2, center.dy - size * 0.95);
+    final rightTop = Offset(center.dx + size * 0.55, center.dy - size * 0.95);
+    final leftBottom = Offset(center.dx - size * 0.2, center.dy - size * 0.2);
+    final rightBottom = Offset(center.dx + size * 0.55, center.dy - size * 0.2);
+
+    canvas.drawLine(leftTop, leftBottom, stroke);
+    canvas.drawLine(rightTop, rightBottom, stroke);
+    canvas.drawLine(leftTop, rightTop, stroke);
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx - size * 0.42, center.dy),
+        width: size * 0.6,
+        height: size * 0.46,
+      ),
+      fill,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx + size * 0.3, center.dy),
+        width: size * 0.6,
+        height: size * 0.46,
+      ),
+      fill,
+    );
   }
 
   void _drawStar(Canvas canvas, Offset center, double size, Paint paint) {

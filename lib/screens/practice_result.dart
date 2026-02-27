@@ -92,8 +92,10 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
 
   List<String> _allDifficultWords() => _safeReplacementWords.take(6).toList();
 
-  List<String> _detectedRWords() => _allDifficultWords().where((w) => w.contains("r")).toList();
-  List<String> _detectedSWords() => _allDifficultWords().where((w) => w.contains("s")).toList();
+  List<String> _detectedRWords() =>
+      _allDifficultWords().where((w) => w.contains("r")).toList();
+  List<String> _detectedSWords() =>
+      _allDifficultWords().where((w) => w.contains("s")).toList();
 
   List<String> _fallbackWords() {
     if (widget.targetSound == "S") {
@@ -127,7 +129,9 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     if (words.isEmpty) return words;
     if (_age <= 4) {
       final shortWords = words.where((w) => w.length <= 4).toList();
-      return (shortWords.isEmpty ? ["sun", "star"] : shortWords).take(2).toList();
+      return (shortWords.isEmpty ? ["sun", "star"] : shortWords)
+          .take(2)
+          .toList();
     }
     if (_age <= 7) {
       final mediumShort = words.where((w) => w.length <= 5).toList();
@@ -155,125 +159,296 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     return "Target words: none";
   }
 
+  String _byAge({
+    required String age3to5,
+    required String age6to8,
+    required String age9to12,
+  }) {
+    if (_age <= 5) return age3to5;
+    if (_age <= 8) return age6to8;
+    return age9to12;
+  }
+
   _StoryTemplate _storyTemplateByAgeAndGenre() {
-    if (_age <= 5) {
-      switch (widget.preference) {
-        case "Animals":
-          return const _StoryTemplate(
-            title: "At The Animal Park",
-            emoji: "🐾",
-            lines: [
-              "Mia visits the animal park with her class.",
-              "She sees a rabbit, a goat, and a small bird.",
-              "The children smile, clap, and feed the animals.",
-              "Everyone waves goodbye before going home.",
-            ],
-          );
-        case "Sports":
-          return const _StoryTemplate(
-            title: "Playground Race",
-            emoji: "🏃",
-            lines: [
-              "Sam and Ria run a short race.",
-              "They cheer for each other with big smiles.",
-              "Teacher gives both children a star sticker.",
-              "They drink water and play again.",
-            ],
-          );
-        default:
-          return const _StoryTemplate(
-            title: "My School Day",
-            emoji: "🏫",
-            lines: [
-              "Asha goes to school with her red bag.",
-              "She reads, draws, and sings with friends.",
-              "The class shares snacks and circle games.",
-              "Everyone says bye at home time.",
-            ],
-          );
-      }
-    }
-
-    if (_age <= 8) {
-      switch (widget.preference) {
-        case "Adventure":
-          return const _StoryTemplate(
-            title: "School Treasure Hunt",
-            emoji: "🗺️",
-            lines: [
-              "The class starts a treasure hunt in school.",
-              "Arun and Sara follow clues near the library.",
-              "They find a hidden box with story cards.",
-              "Each friend reads one card aloud.",
-              "The teacher praises their teamwork.",
-            ],
-          );
-        case "Fantasy":
-        case "Fairy Tale":
-          return const _StoryTemplate(
-            title: "The Talking Pencil",
-            emoji: "✨",
-            lines: [
-              "Nina finds a shiny pencil in her desk.",
-              "The pencil gives gentle reading tips.",
-              "Nina uses the tips to read clearly.",
-              "She shares the tips with her friends.",
-              "The class cheers for her progress.",
-            ],
-          );
-        default:
-          return const _StoryTemplate(
-            title: "Library Helpers",
-            emoji: "📚",
-            lines: [
-              "Four friends help arrange books in the library.",
-              "They sort story books and science books.",
-              "Each friend reads a page with clear voice.",
-              "The librarian thanks them for helping.",
-              "They borrow books to practice at home.",
-            ],
-          );
-      }
-    }
-
     switch (widget.preference) {
-      case "Science Fiction":
-        return const _StoryTemplate(
-          title: "The Class Space Project",
-          emoji: "🚀",
+      case "Comedy":
+        return _StoryTemplate(
+          title: "The Silly Hat Day",
+          emoji: "FUN",
           lines: [
-            "Grade six begins a science space project.",
-            "Rohan builds a model rocket with recycled parts.",
-            "Sana reads launch steps to the team.",
-            "They test the model and improve each trial.",
-            "On project day, they present clearly.",
-            "The teacher praises their speaking confidence.",
+            _byAge(
+              age3to5:
+                  "Mina wore a big hat. It bounced and made everyone giggle.",
+              age6to8:
+                  "Mina wore a wobbly hat to class, and each wobble made the room laugh.",
+              age9to12:
+                  "Mina's oversized hat kept tipping during assembly, and her playful jokes made everyone laugh.",
+            ),
+            _byAge(
+              age3to5: "Ravi tried it too. The hat spun round and round.",
+              age6to8:
+                  "Ravi borrowed the hat, bowed like a comedian, and the class clapped and laughed.",
+              age9to12:
+                  "Ravi turned the hat into a mini comedy act with funny voices and timing that made the class burst out laughing.",
+            ),
+            _byAge(
+              age3to5: "They laughed, smiled, and practiced clear words.",
+              age6to8:
+                  "After laughing, they slowed down and practiced their speech words clearly.",
+              age9to12:
+                  "After the laughter, they refocused and repeated target words with clear, confident pronunciation.",
+            ),
+          ],
+        );
+      case "Fantasy":
+      case "Fairy Tale":
+        return _StoryTemplate(
+          title: "The Moonlight Door",
+          emoji: "MAGIC",
+          lines: [
+            _byAge(
+              age3to5:
+                  "Sara found a tiny glowing door. It sparkled like stars.",
+              age6to8:
+                  "Sara discovered a glowing door behind the library shelf, shining like moonlight.",
+              age9to12:
+                  "Sara uncovered a moonlit door hidden in the old library wall, radiating silver light and mystery.",
+            ),
+            _byAge(
+              age3to5: "A soft dragon said hello. Sara looked amazed.",
+              age6to8:
+                  "A gentle dragon greeted her and showed a sky full of floating lanterns.",
+              age9to12:
+                  "A gentle dragon guide welcomed her into a floating city of lanterns, and Sara watched in awe.",
+            ),
+            _byAge(
+              age3to5: "She listened and said each sound slowly and clearly.",
+              age6to8:
+                  "She listened carefully and repeated each practice sound with wonder and focus.",
+              age9to12:
+                  "Inspired by the magical world, she practiced each target sound slowly, clearly, and with curiosity.",
+            ),
+          ],
+        );
+      case "Adventure":
+        return _StoryTemplate(
+          title: "The Hidden Map Trail",
+          emoji: "MAP",
+          lines: [
+            _byAge(
+              age3to5: "A map led Aru to a red box near the school tree.",
+              age6to8:
+                  "Aru followed a map trail across the playground to find a red clue box.",
+              age9to12:
+                  "Aru traced coded clues across the school grounds and located a red checkpoint box.",
+            ),
+            _byAge(
+              age3to5: "Each clue was fun. Aru felt brave.",
+              age6to8:
+                  "Each clue made the adventure more exciting, and Aru felt brave and focused.",
+              age9to12:
+                  "Each solved clue raised the stakes, and Aru stayed calm, bold, and determined.",
+            ),
+            _byAge(
+              age3to5: "At the end, Aru practiced clear speech words.",
+              age6to8:
+                  "At the finish, Aru repeated target words clearly like a real explorer.",
+              age9to12:
+                  "At the final marker, Aru practiced target sounds with precise, steady speech.",
+            ),
+          ],
+        );
+      case "Animals":
+        return _StoryTemplate(
+          title: "Zoo Helper Day",
+          emoji: "ZOO",
+          lines: [
+            _byAge(
+              age3to5: "Lia fed a rabbit and waved at a sleepy bear.",
+              age6to8:
+                  "Lia helped feed rabbits and watched a curious bear roll in the grass.",
+              age9to12:
+                  "Lia joined the zoo helpers, feeding rabbits and observing a bear's playful behavior.",
+            ),
+            _byAge(
+              age3to5: "The animals made funny sounds. Lia smiled.",
+              age6to8:
+                  "Funny animal sounds made everyone smile and listen closely.",
+              age9to12:
+                  "The mix of chirps, growls, and squeaks kept the group engaged and attentive.",
+            ),
+            _byAge(
+              age3to5: "Lia practiced speech sounds in a calm voice.",
+              age6to8:
+                  "Lia repeated her speech words softly and clearly before going home.",
+              age9to12:
+                  "Before leaving, Lia rehearsed her target sounds with calm pacing and clear articulation.",
+            ),
+          ],
+        );
+      case "Sports":
+        return _StoryTemplate(
+          title: "Final Whistle Run",
+          emoji: "RUN",
+          lines: [
+            _byAge(
+              age3to5: "Nina ran to the line and got a bright star sticker.",
+              age6to8:
+                  "Nina sprinted to the finish line while her team cheered loudly.",
+              age9to12:
+                  "Nina pushed through the final stretch, hearing her team chant from the sidelines.",
+            ),
+            _byAge(
+              age3to5: "Her friends clapped and cheered.",
+              age6to8:
+                  "After the whistle, everyone high-fived and celebrated good teamwork.",
+              age9to12:
+                  "At the final whistle, the team celebrated discipline, effort, and smart communication.",
+            ),
+            _byAge(
+              age3to5: "Then Nina practiced clear sounds slowly.",
+              age6to8:
+                  "After the race, Nina practiced her target sounds with steady breathing.",
+              age9to12:
+                  "After cooldown, Nina practiced her target words with rhythm, breath control, and clear speech.",
+            ),
+          ],
+        );
+      case "Science Fiction":
+        return _StoryTemplate(
+          title: "The Class Space Project",
+          emoji: "SPACE",
+          lines: [
+            _byAge(
+              age3to5: "Ria made a tiny rocket with shiny paper.",
+              age6to8:
+                  "Ria and her class built a model rocket and counted down together.",
+              age9to12:
+                  "Ria's team engineered a classroom rocket model and documented each launch test.",
+            ),
+            _byAge(
+              age3to5: "It zoomed a little. Everyone said wow.",
+              age6to8:
+                  "When it launched, the class gasped and shouted with excitement.",
+              age9to12:
+                  "The successful launch sparked excitement, and the team analyzed how to improve stability.",
+            ),
+            _byAge(
+              age3to5: "Ria practiced her speech sounds like a space captain.",
+              age6to8:
+                  "Ria repeated target words clearly like mission commands.",
+              age9to12:
+                  "Ria practiced her target sounds with crisp, command-style pronunciation.",
+            ),
           ],
         );
       case "Mystery":
-        return const _StoryTemplate(
+        return _StoryTemplate(
           title: "The Missing Notebook",
-          emoji: "🕵️",
+          emoji: "CLUE",
           lines: [
-            "Before class, a notebook goes missing.",
-            "Leela checks the classroom and hallway.",
-            "Her friends follow clues from a name label.",
-            "They find the notebook in the reading corner.",
-            "Leela explains each clue to the class.",
-            "Everyone learns calm problem solving.",
+            _byAge(
+              age3to5: "A notebook was gone. Tia looked under the desk.",
+              age6to8:
+                  "When a notebook disappeared, Tia followed tiny clues around the room.",
+              age9to12:
+                  "After a notebook vanished, Tia investigated labels, footprints, and class schedules.",
+            ),
+            _byAge(
+              age3to5: "She found it in the reading corner. Surprise.",
+              age6to8:
+                  "She solved the mystery by finding it in the reading corner basket.",
+              age9to12:
+                  "She solved the case by tracing a pattern of clues to the reading corner shelf.",
+            ),
+            _byAge(
+              age3to5: "Then she practiced her speech words.",
+              age6to8:
+                  "Then she repeated her target sounds clearly and slowly.",
+              age9to12:
+                  "Then she practiced her target words with controlled pace and precise pronunciation.",
+            ),
+          ],
+        );
+      case "Superhero":
+        return _StoryTemplate(
+          title: "The Quiet Hero",
+          emoji: "HERO",
+          lines: [
+            _byAge(
+              age3to5: "Rey wore a cape and helped a friend tie shoes.",
+              age6to8:
+                  "Rey used hero skills to help classmates share, clean up, and stay kind.",
+              age9to12:
+                  "Rey showed real hero values by solving small problems and helping younger students.",
+            ),
+            _byAge(
+              age3to5: "Everyone cheered for kind actions.",
+              age6to8:
+                  "The class cheered because being kind was the best superpower.",
+              age9to12:
+                  "The class praised teamwork and empathy, proving leadership can be quiet and strong.",
+            ),
+            _byAge(
+              age3to5: "Hero Rey practiced clear speech sounds.",
+              age6to8:
+                  "Hero Rey practiced target sounds with a brave, steady voice.",
+              age9to12:
+                  "Rey ended hero training by practicing target sounds with confidence and clarity.",
+            ),
+          ],
+        );
+      case "Friendship":
+        return _StoryTemplate(
+          title: "The Sharing Circle",
+          emoji: "TEAM",
+          lines: [
+            _byAge(
+              age3to5: "Mia and Sam shared crayons and drew a rainbow.",
+              age6to8:
+                  "Mia and Sam solved a small argument by sharing art tools and taking turns.",
+              age9to12:
+                  "Mia and Sam worked through a misunderstanding and rebuilt trust through teamwork.",
+            ),
+            _byAge(
+              age3to5: "They smiled and played together.",
+              age6to8:
+                  "Their friendship grew stronger when they listened to each other.",
+              age9to12:
+                  "By listening and respecting each other, they turned conflict into cooperation.",
+            ),
+            _byAge(
+              age3to5: "They practiced speech words with happy voices.",
+              age6to8:
+                  "They ended by repeating target sounds in calm, friendly voices.",
+              age9to12:
+                  "They finished by practicing target words with clear diction and supportive feedback.",
+            ),
           ],
         );
       default:
-        return const _StoryTemplate(
+        return _StoryTemplate(
           title: "School Garden Project",
-          emoji: "🌱",
+          emoji: "GROW",
           lines: [
-            "The class begins a school garden project.",
-            "Teams prepare soil and plant seeds.",
-            "Students read instructions and repeat key words.",
-            "After weeks, the garden blooms with flowers.",
-            "The class presents results to parents.",
-            "They celebrate teamwork and clear speaking.",
+            _byAge(
+              age3to5: "Kids planted seeds and gave them water.",
+              age6to8: "The class planted a garden and cared for it each day.",
+              age9to12:
+                  "Students designed a garden plan, tracked plant growth, and presented their findings.",
+            ),
+            _byAge(
+              age3to5: "Tiny leaves popped up. Everyone clapped.",
+              age6to8: "When leaves appeared, everyone felt proud and excited.",
+              age9to12:
+                  "As the plants grew, the class reflected on patience, teamwork, and responsibility.",
+            ),
+            _byAge(
+              age3to5: "Then they practiced clear speech sounds.",
+              age6to8: "Then they practiced target sounds slowly and clearly.",
+              age9to12:
+                  "Then they practiced target words with structured pacing and precise articulation.",
+            ),
           ],
         );
     }
@@ -289,7 +464,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
 
   int _repeatCountByAge() => _age <= 8 ? 3 : 2;
 
-  String _repeatWord(String word, int count) => List.generate(count, (_) => word).join(", ");
+  String _repeatWord(String word, int count) =>
+      List.generate(count, (_) => word).join(", ");
 
   String generateStory() {
     final lines = _storyTemplate.lines.take(_storyLineCountByAge()).toList();
@@ -326,8 +502,10 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
 
   String generateContent() {
     final repeat = _hasAttemptedRetell ? _practiceRepeatSection() : "";
-    if (widget.practiceType == "Story") return repeat.isEmpty ? generateStory() : "${generateStory()}\n\n$repeat";
-    if (widget.practiceType == "Song") return repeat.isEmpty ? generateSong() : "${generateSong()}\n\n$repeat";
+    if (widget.practiceType == "Story")
+      return repeat.isEmpty ? generateStory() : "${generateStory()}\n\n$repeat";
+    if (widget.practiceType == "Song")
+      return repeat.isEmpty ? generateSong() : "${generateSong()}\n\n$repeat";
     final base = "${generateStory()}\n\n${generateSong()}";
     return repeat.isEmpty ? base : "$base\n\n$repeat";
   }
@@ -365,7 +543,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     );
 
     if (!available) {
-      setState(() => _scoreMessage = "Microphone unavailable. Check permission.");
+      setState(
+          () => _scoreMessage = "Microphone unavailable. Check permission.");
       return;
     }
 
@@ -409,7 +588,9 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
           decoration: const InputDecoration(labelText: "Enter PIN"),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel")),
           TextButton(
             onPressed: () => Navigator.pop(context, pinController.text.trim()),
             child: const Text("Open"),
@@ -421,7 +602,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     if (!mounted || enteredPin == null) return;
     final savedPin = await ParentPinService.getPin();
     if (enteredPin != savedPin) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Incorrect PIN")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Incorrect PIN")));
       return;
     }
 
@@ -441,7 +623,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
   }
 
   void _calculateScore() {
-    final expected = _filterByTargetSound(_extractStoryKeywords()).take(8).toList();
+    final expected =
+        _filterByTargetSound(_extractStoryKeywords()).take(8).toList();
     if (expected.isEmpty || _recognizedText.trim().isEmpty) {
       setState(() {
         _score = 0;
@@ -456,8 +639,10 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
     }
 
     final percent = ((matched / expected.length) * 100).round();
-    final recognizedWords =
-        RegExp(r"[a-z]+").allMatches(_recognizedText).map((m) => m.group(0)!).toSet();
+    final recognizedWords = RegExp(r"[a-z]+")
+        .allMatches(_recognizedText)
+        .map((m) => m.group(0)!)
+        .toSet();
     var missed = expected.where((w) => !recognizedWords.contains(w)).toList();
     if (missed.isEmpty) {
       missed = _filterByTargetSound(_ageAdjustedWords(_focusWords()));
@@ -468,17 +653,20 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       _hasAttemptedRetell = true;
       _practiceWords = _ageAdjustedWords(missed.take(5).toList());
       if (percent >= 85) {
-        _scoreMessage = "Amazing job. Very clear speaking.";
+        _scoreMessage = "Great job! Your speaking was very clear.";
       } else if (percent >= 60) {
-        _scoreMessage = "Nice try. One more round for extra stars.";
+        _scoreMessage = "Great effort! Try one more round for extra stars.";
       } else {
-        _scoreMessage = "Good effort. Listen again and say each word slowly.";
+        _scoreMessage = "Great trying! Listen again and say each word slowly.";
       }
     });
   }
 
   List<String> _extractStoryKeywords() {
-    final joined = _storyTemplate.lines.take(_storyLineCountByAge()).join(" ").toLowerCase();
+    final joined = _storyTemplate.lines
+        .take(_storyLineCountByAge())
+        .join(" ")
+        .toLowerCase();
     const stopWords = {
       "the",
       "and",
@@ -526,37 +714,11 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
   }
 
   List<String> _filterByTargetSound(List<String> words) {
-    if (widget.targetSound == "R") return words.where((w) => w.contains("r")).toList();
-    if (widget.targetSound == "S") return words.where((w) => w.contains("s")).toList();
+    if (widget.targetSound == "R")
+      return words.where((w) => w.contains("r")).toList();
+    if (widget.targetSound == "S")
+      return words.where((w) => w.contains("s")).toList();
     return [];
-  }
-
-  String _wordPicture(String word) {
-    const pictureMap = {
-      "sun": "☀️",
-      "star": "⭐",
-      "rain": "🌧️",
-      "rabbit": "🐰",
-      "rose": "🌹",
-      "snake": "🐍",
-      "sister": "👧",
-      "car": "🚗",
-      "forest": "🌲",
-      "flower": "🌸",
-      "house": "🏠",
-      "ball": "⚽",
-      "ship": "🚢",
-      "bell": "🔔",
-      "mouse": "🐭",
-      "goat": "🐐",
-      "garden": "🌱",
-      "class": "🏫",
-      "rocket": "🚀",
-      "project": "🧪",
-      "notebook": "📓",
-      "library": "📚",
-    };
-    return pictureMap[word] ?? "🖼️";
   }
 
   @override
@@ -567,7 +729,9 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
-        title: GestureDetector(onLongPress: _openParentDetails, child: const Text("Practice Time")),
+        title: GestureDetector(
+            onLongPress: _openParentDetails,
+            child: const Text("Practice Time")),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -575,20 +739,18 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                "Great job, ${widget.name}",
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.deepPurple),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Text(_storyTemplate.emoji, style: const TextStyle(fontSize: 56)),
+                      Text(_storyTemplate.emoji,
+                          style: const TextStyle(fontSize: 56)),
                       const SizedBox(height: 6),
-                      Text(_storyTemplate.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+                      Text(_storyTemplate.title,
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w700)),
                     ],
                   ),
                 ),
@@ -608,7 +770,8 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(generateContent(), style: const TextStyle(fontSize: 18, height: 1.45)),
+                  child: Text(generateContent(),
+                      style: const TextStyle(fontSize: 18, height: 1.45)),
                 ),
               ),
               const SizedBox(height: 12),
@@ -650,7 +813,9 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
               ),
               if (_hasAttemptedRetell) ...[
                 const SizedBox(height: 12),
-                const Text("Words To Practice", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                const Text("Words To Practice",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -659,15 +824,20 @@ class _PracticeResultScreenState extends State<PracticeResultScreen> {
                     return Card(
                       color: const Color(0xFFEDE7FF),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Text(word, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        child: Text(word,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
                       ),
                     );
                   }).toList(),
                 ),
               ],
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("Practice Again")),
+              ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Practice Again")),
             ],
           ),
         ),

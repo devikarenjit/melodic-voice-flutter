@@ -91,7 +91,10 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
       backgroundColor: const Color(0xFFFFF3E0),
       appBar: AppBar(
         backgroundColor: Colors.pinkAccent,
-        title: const Text("Melodic Voice"),
+        title: const Text(
+          "Melodic Voice",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -287,7 +290,7 @@ class _RegisterChildScreenState extends State<RegisterChildScreen> {
               },
               child: const Text(
                 "Generate Practice",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           ],
